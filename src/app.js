@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const authRoutes = require("./routes/auth");
+const taskRoutes = require("./routes/task");
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -21,6 +22,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth", authRoutes);
+app.use("/task", taskRoutes);
 
 mongoose
   .connect(
@@ -32,3 +34,5 @@ mongoose
     });
   })
   .catch((err) => console.log(err));
+
+// model -> controller -> routes -> app.js
