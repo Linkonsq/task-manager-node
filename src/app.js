@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/auth", authRoutes);
-app.use("/task", taskRoutes);
+app.use("/operation", taskRoutes);
 
 mongoose
   .connect(
