@@ -77,9 +77,6 @@ exports.updateUser = async (req, res) => {
 
   try {
     const userId = req.params.id;
-    const name = req.body.name;
-    const email = req.body.email;
-    const password = req.body.password;
 
     const user = await User.findById(userId);
 
@@ -87,11 +84,19 @@ exports.updateUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.name = name;
-    user.email = email;
-    user.password = password;
+    // const name = req.body.name;
+    // const email = req.body.email;
+    // const password = req.body.password;
+
+    // user.name = name;
+    // user.email = email;
+    // user.password = password;
+
+    // alternative way to update user dynamically without hardcoding the fields
+    updates.forEach((update) => (user[update] = req.body[update]));
 
     const result = await user.save();
+
     res.status(200).json({ message: "User updated", user: result });
   } catch (err) {
     if (!err.statusCode) {

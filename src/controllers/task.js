@@ -73,8 +73,6 @@ exports.updateTask = async (req, res) => {
 
   try {
     const taskId = req.params.id;
-    const description = req.body.description;
-    const completed = req.body.completed;
 
     const task = await Task.findById(taskId);
 
@@ -82,8 +80,14 @@ exports.updateTask = async (req, res) => {
       return res.status(404).json({ message: "Task not found" });
     }
 
-    task.description = description;
-    task.completed = completed;
+    // const description = req.body.description;
+    // const completed = req.body.completed;
+
+    // task.description = description;
+    // task.completed = completed;
+
+    // alternative way to update the task without hardcoding the fields
+    updates.forEach((update) => (task[update] = req.body[update]));
 
     const result = await task.save();
     res.status(200).json({ message: "Task updated", task: result });
