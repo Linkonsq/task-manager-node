@@ -8,4 +8,6 @@ router.get("/tasks", taskController.getTasks);
 
 router.get("/task/:id", taskController.getTask);
 
+router.patch("/task/:id", taskController.updateTask);
+
 module.exports = router;
