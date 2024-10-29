@@ -9,6 +9,8 @@ router.get("/users", authController.getUsers);
 
 router.get("/user/:id", authController.getUser);
 
-router.patch("/users/:id", authController.updateUser);
+router.patch("/user/:id", authController.updateUser);
+
+router.delete("/user/:id", authController.deleteUser);
 
 module.exports = router;
