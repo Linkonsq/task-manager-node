@@ -9,4 +9,6 @@ router.get("/users", authController.getUsers);
 
 router.get("/user/:id", authController.getUser);
 
+router.patch("/users/:id", authController.updateUser);
+
 module.exports = router;

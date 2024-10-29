@@ -10,8 +10,11 @@ exports.createTask = async (req, res) => {
     });
     const result = await task.save();
     res.status(201).json({ message: "Task created", task: result });
-  } catch (error) {
-    res.status(400).send(error);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
   }
 };
 
@@ -25,8 +28,11 @@ exports.getTasks = async (req, res) => {
       tasks: tasks,
       totalTasks: totalTasks,
     });
-  } catch (error) {
-    res.status(500).send(error);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
   }
 };
 
@@ -43,7 +49,10 @@ exports.getTask = async (req, res) => {
       message: "Fetched task successfully",
       task: task,
     });
-  } catch (error) {
-    res.status(500).send(error);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
   }
 };
