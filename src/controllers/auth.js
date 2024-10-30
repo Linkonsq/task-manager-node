@@ -1,7 +1,8 @@
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
 
 // Signup a user
-exports.signup = async (req, res) => {
+exports.signup = async (req, res, next) => {
   try {
     const name = req.body.name;
     const email = req.body.email;
@@ -22,8 +23,39 @@ exports.signup = async (req, res) => {
   }
 };
 
+// Login a user
+exports.login = async (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  let loadedUser;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      const error = new Error("A user with this email could not be found.");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    loadedUser = user;
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      const error = new Error("Wrong password!");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    res.status(200).json({ message: "User logged in", user: loadedUser });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
 // Get all users
-exports.getUsers = async (req, res) => {
+exports.getUsers = async (req, res, next) => {
   try {
     const totalUsers = await User.find().countDocuments();
     const users = await User.find();
@@ -42,7 +74,7 @@ exports.getUsers = async (req, res) => {
 };
 
 // Get a single user
-exports.getUser = async (req, res) => {
+exports.getUser = async (req, res, next) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId);
@@ -64,7 +96,7 @@ exports.getUser = async (req, res) => {
 };
 
 // Update a user
-exports.updateUser = async (req, res) => {
+exports.updateUser = async (req, res, next) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["name", "email", "password", "age"];
   const isValidOperation = updates.every((update) =>
@@ -107,7 +139,7 @@ exports.updateUser = async (req, res) => {
 };
 
 // Delete a user
-exports.deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res, next) => {
   try {
     const userId = req.params.id;
     const user = await User.findByIdAndDelete(userId);
