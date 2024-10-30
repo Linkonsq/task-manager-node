@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // Signup a user
 exports.signup = async (req, res, next) => {
@@ -13,6 +14,13 @@ exports.signup = async (req, res, next) => {
       email: email,
       password: password,
     });
+    await user.save();
+
+    const token = jwt.sign({ _id: user._id.toString() }, "somesupersecret", {
+      expiresIn: "1h",
+    });
+
+    user.tokens = user.tokens.concat({ token });
     const result = await user.save();
     res.status(201).json({ message: "User created", user: result });
   } catch (err) {
@@ -27,7 +35,6 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  let loadedUser;
 
   try {
     const user = await User.findOne({ email });
@@ -37,7 +44,6 @@ exports.login = async (req, res, next) => {
       throw error;
     }
 
-    loadedUser = user;
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       const error = new Error("Wrong password!");
@@ -45,7 +51,14 @@ exports.login = async (req, res, next) => {
       throw error;
     }
 
-    res.status(200).json({ message: "User logged in", user: loadedUser });
+    const token = jwt.sign({ _id: user._id.toString() }, "somesupersecret", {
+      expiresIn: "1h",
+    });
+
+    user.tokens = user.tokens.concat({ token });
+    await user.save();
+
+    res.status(200).json({ token: token, userId: user._id.toString() });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
