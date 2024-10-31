@@ -51,11 +51,32 @@ exports.login = async (req, res, next) => {
       expiresIn: "1h",
     });
 
+    user.tokens = user.tokens.concat({ token });
+    await user.save();
+
     res.status(200).json({
       message: "Login successful",
       token: token,
-      userId: user._id.toString(),
+      user: user,
     });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+// Logout a user
+exports.logout = async (req, res, next) => {
+  try {
+    // keep every other tokens except the request token
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+
+    await req.user.save();
+    res.status(200).json({ message: "Logout successful" });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
