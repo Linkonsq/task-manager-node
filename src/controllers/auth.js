@@ -104,28 +104,6 @@ exports.getUsers = async (req, res) => {
   res.status(200).json({ message: "Fetched profile", user: req.user });
 };
 
-// Get a single user
-exports.getUser = async (req, res, next) => {
-  try {
-    const userId = req.params.id;
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({
-      message: "Fetched user successfully",
-      user: user,
-    });
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-  }
-};
-
 // Update a user
 exports.updateUser = async (req, res, next) => {
   const updates = Object.keys(req.body);
@@ -139,26 +117,9 @@ exports.updateUser = async (req, res, next) => {
   }
 
   try {
-    const userId = req.params.id;
+    updates.forEach((update) => (req.user[update] = req.body[update]));
 
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // const name = req.body.name;
-    // const email = req.body.email;
-    // const password = req.body.password;
-
-    // user.name = name;
-    // user.email = email;
-    // user.password = password;
-
-    // alternative way to update user dynamically without hardcoding the fields
-    updates.forEach((update) => (user[update] = req.body[update]));
-
-    const result = await user.save();
+    const result = await req.user.save();
 
     res.status(200).json({ message: "User updated", user: result });
   } catch (err) {
@@ -172,14 +133,9 @@ exports.updateUser = async (req, res, next) => {
 // Delete a user
 exports.deleteUser = async (req, res, next) => {
   try {
-    const userId = req.params.id;
-    const user = await User.findByIdAndDelete(userId);
+    await req.user.deleteOne();
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({ message: "User deleted", user: user });
+    res.status(200).json({ message: "User deleted", user: req.user });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;

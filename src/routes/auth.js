@@ -11,12 +11,10 @@ router.post("/logout", isAuth, authController.logout);
 
 router.post("/logoutAll", isAuth, authController.logoutAll);
 
-router.get("/users/me", isAuth, authController.getUsers);
+router.get("/user/me", isAuth, authController.getUsers);
 
-router.get("/user/:id", authController.getUser);
+router.patch("/user/me", isAuth, authController.updateUser);
 
-router.patch("/user/:id", authController.updateUser);
-
-router.delete("/user/:id", authController.deleteUser);
+router.delete("/user/me", isAuth, authController.deleteUser);
 
 module.exports = router;
