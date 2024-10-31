@@ -67,7 +67,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// Logout a user
+// Logout a user with one token
 exports.logout = async (req, res, next) => {
   try {
     // keep every other tokens except the request token
@@ -75,6 +75,20 @@ exports.logout = async (req, res, next) => {
       return token.token !== req.token;
     });
 
+    await req.user.save();
+    res.status(200).json({ message: "Logout successful" });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+// Logout a user with all  tokens
+exports.logoutAll = async (req, res, next) => {
+  try {
+    req.user.tokens = [];
     await req.user.save();
     res.status(200).json({ message: "Logout successful" });
   } catch (err) {

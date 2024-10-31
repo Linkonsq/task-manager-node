@@ -9,6 +9,8 @@ router.post("/login", authController.login);
 
 router.post("/logout", isAuth, authController.logout);
 
+router.post("/logoutAll", isAuth, authController.logoutAll);
+
 router.get("/users/me", isAuth, authController.getUsers);
 
 router.get("/user/:id", authController.getUser);
