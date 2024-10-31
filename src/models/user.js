@@ -41,14 +41,6 @@ const userSchema = new Schema({
       }
     },
   },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
 });
 
 // Hash the plain text password before saving

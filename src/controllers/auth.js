@@ -8,19 +8,15 @@ exports.signup = async (req, res, next) => {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
+    const age = req.body.age;
 
     const user = new User({
       name: name,
       email: email,
       password: password,
-    });
-    await user.save();
-
-    const token = jwt.sign({ _id: user._id.toString() }, "somesupersecret", {
-      expiresIn: "1h",
+      age: age,
     });
 
-    user.tokens = user.tokens.concat({ token });
     const result = await user.save();
     res.status(201).json({ message: "User created", user: result });
   } catch (err) {
@@ -55,10 +51,11 @@ exports.login = async (req, res, next) => {
       expiresIn: "1h",
     });
 
-    user.tokens = user.tokens.concat({ token });
-    await user.save();
-
-    res.status(200).json({ token: token, userId: user._id.toString() });
+    res.status(200).json({
+      message: "Login successful",
+      token: token,
+      userId: user._id.toString(),
+    });
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -67,23 +64,9 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// Get all users
-exports.getUsers = async (req, res, next) => {
-  try {
-    const totalUsers = await User.find().countDocuments();
-    const users = await User.find();
-
-    res.status(200).json({
-      message: "Fetched users successfully",
-      users: users,
-      totalUsers: totalUsers,
-    });
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-  }
+// Get user profile
+exports.getUsers = async (req, res) => {
+  res.status(200).json({ message: "Fetched profile", user: req.user });
 };
 
 // Get a single user
