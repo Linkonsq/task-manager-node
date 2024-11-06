@@ -11,7 +11,7 @@ router.post("/logout", isAuth, authController.logout);
 
 router.post("/logoutAll", isAuth, authController.logoutAll);
 
-router.get("/user/me", isAuth, authController.getUsers);
+router.get("/user/me", isAuth, authController.getUser);
 
 router.patch("/user/me", isAuth, authController.updateUser);
 

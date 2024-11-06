@@ -51,6 +51,13 @@ const userSchema = new Schema({
   ],
 });
 
+// Virtual property
+userSchema.virtual("tasks", {
+  ref: "Task",
+  localField: "_id",
+  foreignField: "owner",
+});
+
 // Hide private data
 userSchema.methods.toJSON = function () {
   const user = this;

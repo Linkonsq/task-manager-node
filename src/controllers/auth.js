@@ -100,7 +100,7 @@ exports.logoutAll = async (req, res, next) => {
 };
 
 // Get user profile
-exports.getUsers = async (req, res) => {
+exports.getUser = async (req, res) => {
   res.status(200).json({ message: "Fetched profile", user: req.user });
 };
 

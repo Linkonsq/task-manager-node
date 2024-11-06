@@ -5,10 +5,13 @@ exports.createTask = async (req, res) => {
   try {
     const description = req.body.description;
     const completed = req.body.completed;
+    const owner = req.user._id;
     const task = new Task({
       description: description,
       completed: completed,
+      owner: owner,
     });
+
     const result = await task.save();
     res.status(201).json({ message: "Task created", task: result });
   } catch (err) {
