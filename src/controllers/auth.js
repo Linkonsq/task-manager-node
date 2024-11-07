@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Task = require("../models/task");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -133,6 +134,9 @@ exports.updateUser = async (req, res, next) => {
 // Delete a user
 exports.deleteUser = async (req, res, next) => {
   try {
+    // First, delete tasks associated with the user
+    await Task.deleteMany({ owner: req.user._id });
+
     await req.user.deleteOne();
 
     res.status(200).json({ message: "User deleted", user: req.user });
