@@ -5,12 +5,12 @@ const isAuth = require("../middleware/is-auth");
 
 router.post("/task", isAuth, taskController.createTask);
 
-router.get("/tasks", taskController.getTasks);
+router.get("/tasks", isAuth, taskController.getTasks);
 
-router.get("/task/:id", taskController.getTask);
+router.get("/task/:id", isAuth, taskController.getTask);
 
-router.patch("/task/:id", taskController.updateTask);
+router.patch("/task/:id", isAuth, taskController.updateTask);
 
-router.delete("/task/:id", taskController.deleteTask);
+router.delete("/task/:id", isAuth, taskController.deleteTask);
 
 module.exports = router;

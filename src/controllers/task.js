@@ -25,8 +25,14 @@ exports.createTask = async (req, res) => {
 // Get all tasks
 exports.getTasks = async (req, res) => {
   try {
-    const totalTasks = await Task.find().countDocuments();
-    const tasks = await Task.find();
+    const totalTasks = await Task.find({
+      owner: req.user._id,
+    }).countDocuments();
+
+    const tasks = await Task.find({ owner: req.user._id });
+
+    // alternative way to fetch tasks
+    // await req.user.populate("tasks").execPopulate();
 
     res.status(200).json({
       message: "Fetched tasks successfully",
@@ -43,9 +49,10 @@ exports.getTasks = async (req, res) => {
 
 // Get a single task
 exports.getTask = async (req, res) => {
+  const taskId = req.params.id;
+
   try {
-    const taskId = req.params.id;
-    const task = await Task.findById(taskId);
+    const task = await Task.findOne({ _id: taskId, owner: req.user._id });
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
@@ -70,6 +77,7 @@ exports.updateTask = async (req, res) => {
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
+
   if (!isValidOperation) {
     return res.status(400).json({ message: "Invalid updates!" });
   }
@@ -77,7 +85,7 @@ exports.updateTask = async (req, res) => {
   try {
     const taskId = req.params.id;
 
-    const task = await Task.findById(taskId);
+    const task = await Task.findOne({ _id: taskId, owner: req.user._id });
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
@@ -106,7 +114,10 @@ exports.updateTask = async (req, res) => {
 exports.deleteTask = async (req, res) => {
   try {
     const taskId = req.params.id;
-    const task = await Task.findByIdAndDelete(taskId);
+    const task = await Task.findOneAndDelete({
+      _id: taskId,
+      owner: req.user._id,
+    });
 
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
