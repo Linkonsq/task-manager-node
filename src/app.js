@@ -26,7 +26,7 @@ app.use("/operation", taskRoutes);
 
 mongoose
   .connect(
-    "mongodb+srv://linkon:Wmk4OOdE0SdGbgZU@cluster0.ixgki.mongodb.net/tasks-api?retryWrites=true"
+    "mongodb+srv://linkon:Wmk4OOdE0SdGbgZU@cluster0.ixgki.mongodb.net/tasks-api?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then(() => {
     app.listen(port, () => {
