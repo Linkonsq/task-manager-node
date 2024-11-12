@@ -37,7 +37,17 @@ exports.getTasks = async (req, res) => {
     const tasks = await Task.find(query);
 
     // alternative way to fetch tasks
-    // await req.user.populate("tasks").execPopulate();
+    // const match = {};
+    // if (req.query.completed) {
+    //   match.completed = req.query.completed === "true";
+    // }
+
+    // await req.user
+    //   .populate({
+    //     path: "tasks",
+    //     match,
+    //   })
+    //   .execPopulate();
 
     res.status(200).json({
       message: "Fetched tasks successfully",
