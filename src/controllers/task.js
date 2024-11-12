@@ -25,11 +25,16 @@ exports.createTask = async (req, res) => {
 // Get all tasks
 exports.getTasks = async (req, res) => {
   try {
-    const totalTasks = await Task.find({
-      owner: req.user._id,
-    }).countDocuments();
+    const completed = req.query.completed === "true";
+    const query = { owner: req.user._id };
 
-    const tasks = await Task.find({ owner: req.user._id });
+    if (req.query.completed) {
+      query.completed = completed; // Add completed filter if provided
+    }
+
+    const totalTasks = await Task.find(query).countDocuments();
+
+    const tasks = await Task.find(query);
 
     // alternative way to fetch tasks
     // await req.user.populate("tasks").execPopulate();
