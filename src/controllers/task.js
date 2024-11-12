@@ -23,18 +23,22 @@ exports.createTask = async (req, res) => {
 };
 
 // Get all tasks
+// Get /operation/tasks?completed=true
+// Get /operation/tasks?limit=10&skip=0
 exports.getTasks = async (req, res) => {
+  const completed = req.query.completed === "true";
+  const query = { owner: req.user._id };
+  const limit = parseInt(req.query.limit);
+  const skip = parseInt(req.query.skip);
+
+  if (req.query.completed) {
+    query.completed = completed; // Add completed filter if provided
+  }
+
   try {
-    const completed = req.query.completed === "true";
-    const query = { owner: req.user._id };
-
-    if (req.query.completed) {
-      query.completed = completed; // Add completed filter if provided
-    }
-
     const totalTasks = await Task.find(query).countDocuments();
 
-    const tasks = await Task.find(query);
+    const tasks = await Task.find(query).limit(limit).skip(skip);
 
     // alternative way to fetch tasks
     // const match = {};
@@ -46,6 +50,10 @@ exports.getTasks = async (req, res) => {
     //   .populate({
     //     path: "tasks",
     //     match,
+    //     options: {
+    //       limit: parseInt(req.query.limit),
+    //       skip: parseInt(req.query.skip),
+    //     },
     //   })
     //   .execPopulate();
 
