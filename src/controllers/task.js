@@ -25,9 +25,11 @@ exports.createTask = async (req, res) => {
 // Get all tasks
 // Get /operation/tasks?completed=true
 // Get /operation/tasks?limit=10&skip=0
+// Get /operation/tasks?sortBy=createdAt:desc
 exports.getTasks = async (req, res) => {
   const completed = req.query.completed === "true";
   const query = { owner: req.user._id };
+  const sort = {};
   const limit = parseInt(req.query.limit);
   const skip = parseInt(req.query.skip);
 
@@ -35,10 +37,15 @@ exports.getTasks = async (req, res) => {
     query.completed = completed; // Add completed filter if provided
   }
 
+  if (req.query.sortBy) {
+    const parts = req.query.sortBy.split(":");
+    sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
+  }
+
   try {
     const totalTasks = await Task.find(query).countDocuments();
 
-    const tasks = await Task.find(query).limit(limit).skip(skip);
+    const tasks = await Task.find(query).limit(limit).skip(skip).sort(sort);
 
     // alternative way to fetch tasks
     // const match = {};
@@ -51,8 +58,9 @@ exports.getTasks = async (req, res) => {
     //     path: "tasks",
     //     match,
     //     options: {
-    //       limit: parseInt(req.query.limit),
-    //       skip: parseInt(req.query.skip),
+    //       limit,
+    //       skip,
+    //       sort,
     //     },
     //   })
     //   .execPopulate();
