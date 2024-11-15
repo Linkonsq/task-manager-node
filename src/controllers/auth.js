@@ -147,3 +147,8 @@ exports.deleteUser = async (req, res, next) => {
     next(err);
   }
 };
+
+// Upload user avatar
+exports.uploadAvatar = (req, res) => {
+  res.status(200).json({ message: "Avatar uploaded" });
+};
