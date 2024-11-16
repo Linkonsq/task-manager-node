@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Task = require("../models/task");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const sharp = require("sharp");
 
 // Signup a user
 exports.signup = async (req, res, next) => {
@@ -150,7 +151,13 @@ exports.deleteUser = async (req, res, next) => {
 
 // Upload user avatar
 exports.uploadAvatar = async (req, res) => {
-  req.user.avatar = req.file.buffer;
+  const buffer = await sharp(req.file.buffer)
+    .resize({ width: 250, height: 250 })
+    .png()
+    .toBuffer();
+
+  req.user.avatar = buffer;
+
   await req.user.save();
   res.status(200).json({ message: "Avatar uploaded" });
 };
@@ -173,7 +180,7 @@ exports.getAvatar = async (req, res) => {
     if (!user.avatar) {
       return res.status(404).json({ message: "User has no avatar" });
     }
-    res.set("Content-Type", "image/jpg");
+    res.set("Content-Type", "image/png");
     res.send(user.avatar);
   } catch (err) {
     if (!err.statusCode) {
