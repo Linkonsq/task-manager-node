@@ -21,7 +21,11 @@ router.delete("/user/me", isAuth, authController.deleteUser);
 router.post(
   "/user/me/avatar",
   fileUpload.single("avatar"),
-  authController.uploadAvatar
+  authController.uploadAvatar,
+  (error, req, res, next) => {
+    // This middleware will catch any errors from the previous middleware
+    res.status(400).json({ error: error.message });
+  }
 );
 
 module.exports = router;
