@@ -1,7 +1,6 @@
 const multer = require("multer");
 
 module.exports = multer({
-  dest: "avatars",
   limits: {
     fileSize: 1000000, // 1MB
   },

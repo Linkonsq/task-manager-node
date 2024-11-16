@@ -20,6 +20,7 @@ router.delete("/user/me", isAuth, authController.deleteUser);
 
 router.post(
   "/user/me/avatar",
+  isAuth,
   fileUpload.single("avatar"),
   authController.uploadAvatar,
   (error, req, res, next) => {
@@ -27,5 +28,7 @@ router.post(
     res.status(400).json({ error: error.message });
   }
 );
+
+router.delete("/user/me/avatar", isAuth, authController.deleteAvatar);
 
 module.exports = router;

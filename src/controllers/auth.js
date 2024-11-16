@@ -149,6 +149,15 @@ exports.deleteUser = async (req, res, next) => {
 };
 
 // Upload user avatar
-exports.uploadAvatar = (req, res) => {
+exports.uploadAvatar = async (req, res) => {
+  req.user.avatar = req.file.buffer;
+  await req.user.save();
   res.status(200).json({ message: "Avatar uploaded" });
+};
+
+// Delete user avatar
+exports.deleteAvatar = async (req, res) => {
+  req.user.avatar = undefined;
+  await req.user.save();
+  res.status(200).json({ message: "Avatar deleted" });
 };
