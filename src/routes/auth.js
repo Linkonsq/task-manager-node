@@ -31,4 +31,6 @@ router.post(
 
 router.delete("/user/me/avatar", isAuth, authController.deleteAvatar);
 
+router.get("/user/:id/avatar", authController.getAvatar);
+
 module.exports = router;

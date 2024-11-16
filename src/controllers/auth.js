@@ -161,3 +161,24 @@ exports.deleteAvatar = async (req, res) => {
   await req.user.save();
   res.status(200).json({ message: "Avatar deleted" });
 };
+
+// Get user avatar
+exports.getAvatar = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.avatar) {
+      return res.status(404).json({ message: "User has no avatar" });
+    }
+    res.set("Content-Type", "image/jpg");
+    res.send(user.avatar);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
