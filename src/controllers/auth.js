@@ -3,6 +3,7 @@ const Task = require("../models/task");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const sharp = require("sharp");
+const { sendWelcomeEmail, sendCancelationEmail } = require("../emails/account");
 
 // Signup a user
 exports.signup = async (req, res, next) => {
@@ -20,6 +21,7 @@ exports.signup = async (req, res, next) => {
     });
 
     const result = await user.save();
+    sendWelcomeEmail(user.email, user.name);
     res.status(201).json({ message: "User created", user: result });
   } catch (err) {
     if (!err.statusCode) {
@@ -139,6 +141,7 @@ exports.deleteUser = async (req, res, next) => {
     await Task.deleteMany({ owner: req.user._id });
 
     await req.user.deleteOne();
+    sendCancelationEmail(req.user.email, req.user.name);
 
     res.status(200).json({ message: "User deleted", user: req.user });
   } catch (err) {
