@@ -3,9 +3,10 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const authRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/task");
+require("dotenv").config();
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT;
 
 // automatically parse request body
 app.use(bodyParser.json());
@@ -25,9 +26,7 @@ app.use("/auth", authRoutes);
 app.use("/operation", taskRoutes);
 
 mongoose
-  .connect(
-    "mongodb+srv://linkon:Wmk4OOdE0SdGbgZU@cluster0.ixgki.mongodb.net/tasks-api?retryWrites=true&w=majority&appName=Cluster0"
-  )
+  .connect(process.env.MONOGODB_URL)
   .then(() => {
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
